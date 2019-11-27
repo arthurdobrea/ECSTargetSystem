@@ -11,24 +11,33 @@ namespace Scenes
         {
             Entities.WithNone<HasTarget>().WithAll<Unit>().ForEach((Entity entity, ref Translation unitTransalation) =>
             {
+                Team yourTeam = World.Active.EntityManager.GetComponentData<Team>(entity);
+                
                 float3 unitPosition = unitTransalation.Value;
                 Entity closestTargetEntity = Entity.Null;
                 float3 closestTargetPosition = float3.zero;
 
-                Entities.WithAll<Target>().ForEach((Entity targetEntity, ref Translation targetTranslation) =>
+                Entities.WithAll<Unit>().ForEach((Entity targetEntity, ref Translation targetTranslation) =>
                 {
-                    if (closestTargetEntity == Entity.Null)
+                    
+                    Team enemyTeam = World.Active.EntityManager.GetComponentData<Team>(targetEntity);
+                    
+                    if (enemyTeam.team != yourTeam.team)
                     {
-                        closestTargetEntity = targetEntity;
-                        closestTargetPosition = targetTranslation.Value;
-                    }
-                    else
-                    {
-                        if (math.distance(unitPosition, targetTranslation.Value) <
-                            math.distance(unitPosition, closestTargetPosition))
+                       
+                        if (closestTargetEntity == Entity.Null)
                         {
                             closestTargetEntity = targetEntity;
                             closestTargetPosition = targetTranslation.Value;
+                        }
+                        else
+                        {
+                            if (math.distance(unitPosition, targetTranslation.Value) <
+                                math.distance(unitPosition, closestTargetPosition))
+                            {
+                                closestTargetEntity = targetEntity;
+                                closestTargetPosition = targetTranslation.Value;
+                            }
                         }
                     }
                 });

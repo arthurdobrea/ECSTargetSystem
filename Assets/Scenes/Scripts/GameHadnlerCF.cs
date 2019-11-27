@@ -19,12 +19,12 @@ public class GameHadnlerCF : MonoBehaviour
     {
         entityManager = World.Active.EntityManager;
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 5; i++)
         {
             SpawnUnitEntity();
         }
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 5; i++)
         {
             SpawnTargetEntity();
         }
@@ -34,16 +34,17 @@ public class GameHadnlerCF : MonoBehaviour
 
     private void Update()
     {
-//        spawnTargetTimer -= Time.deltaTime;
-//        if (spawnTargetTimer < 0)
-//        {
-//            spawnTargetTimer = .1f;
-//
-//            for (int i = 0; i < 10; i++)
-//            {
-//                SpawnTargetEntity();
-//            }
-//        }
+        spawnTargetTimer -= Time.deltaTime;
+        if (spawnTargetTimer < 0)
+        {
+            spawnTargetTimer = .1f;
+
+            for (int i = 0; i < 10; i++)
+            {
+                SpawnUnitEntity();
+                SpawnTargetEntity();
+            }
+        }
     }
 
     private void SpawnUnitEntity()
@@ -58,10 +59,12 @@ public class GameHadnlerCF : MonoBehaviour
             typeof(LocalToWorld),
             typeof(RenderMesh),
             typeof(Scale),
-            typeof(Unit)
+            typeof(Unit),
+            typeof(Team)
         );
         SetEntityComponentData(entity, position, quadMesh, unitMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = 1.5f});
+        entityManager.SetComponentData(entity, new Team{team = 2});
     }
 
     private void SpawnTargetEntity()
@@ -71,12 +74,12 @@ public class GameHadnlerCF : MonoBehaviour
             typeof(LocalToWorld),
             typeof(RenderMesh),
             typeof(Scale),
-            typeof(Target)
+            typeof(Unit),
+            typeof(Team)
         );
-        SetEntityComponentData(entity,
-            new float3(Random.Range(-8, +8f), Random.Range(-5, +5f), 0), quadMesh,
-            targetMaterial);
+        SetEntityComponentData(entity, new float3(Random.Range(-8, +8f), Random.Range(-5, +5f), 0), quadMesh, targetMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = .5f});
+        entityManager.SetComponentData(entity, new Team{team = 1});
     }
 
     private void SetEntityComponentData(Entity entity, float3 spawnPosition, Mesh mesh, Material material)
@@ -102,6 +105,11 @@ public struct Unit : IComponentData
 {
 }
 
+public struct Team : IComponentData
+{
+    public int team;
+}
+
 public struct Target : IComponentData
 {
 }
@@ -109,20 +117,4 @@ public struct Target : IComponentData
 public struct HasTarget : IComponentData
 {
     public Entity targetEnity;
-}
-
-public class HasTargetDebug : ComponentSystem
-{
-    protected override void OnUpdate()
-    {
-        Entities.ForEach((Entity entity, ref Translation translation, ref HasTarget hasTarget) =>
-        {
-            if (World.Active.EntityManager.Exists(hasTarget.targetEnity))
-            {
-                Translation targetTranslation =
-                    World.Active.EntityManager.GetComponentData<Translation>(hasTarget.targetEnity);
-                Debug.DrawLine(translation.Value, targetTranslation.Value);
-            }
-        });
-    }
 }
