@@ -15,13 +15,12 @@ public class UnitMoveToTargetSystemCF : ComponentSystem
                     World.Active.EntityManager.GetComponentData<Translation>(hasTarget.targetEnity);
 
                 float3 targetDir = math.normalize(targetTranslation.Value - translation.Value);
-                float moveSpeed = 5f;
+                float moveSpeed = 1f;
                 translation.Value += targetDir * moveSpeed * Time.deltaTime;
 
-                if (math.distance(translation.Value, targetTranslation.Value) < .2f)
+                if (math.distance(translation.Value, targetTranslation.Value) < 2.2f)
                 {
-                    PostUpdateCommands.DestroyEntity(hasTarget.targetEnity);
-                    PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
+                    PostUpdateCommands.AddComponent(unitEntity, typeof(AttackFaze));
                 }
             }
             else
