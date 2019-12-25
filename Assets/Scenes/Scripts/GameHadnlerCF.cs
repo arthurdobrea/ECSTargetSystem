@@ -17,6 +17,7 @@ public class GameHadnlerCF : MonoBehaviour
 
     private void Start()
     {
+        return;
         entityManager = World.Active.EntityManager;
 
         for (int i = 0; i < 5; i++)
@@ -34,6 +35,7 @@ public class GameHadnlerCF : MonoBehaviour
 
     private void Update()
     {
+        return;
         spawnTargetTimer -= Time.deltaTime;
         if (spawnTargetTimer < 0)
         {
