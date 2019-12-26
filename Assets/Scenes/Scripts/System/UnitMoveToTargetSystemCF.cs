@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Scenes.Components;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class UnitMoveToTargetSystemCF : ComponentSystem
 
                 if (math.distance(translation.Value, targetTranslation.Value) < .2f)
                 {
+                    World.Active.EntityManager.SetComponentData(unitEntity,new AttackFaze{});
                     PostUpdateCommands.DestroyEntity(hasTarget.targetEnity);
                     PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
                 }

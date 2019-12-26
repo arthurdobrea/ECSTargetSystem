@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Scenes;
+using Scenes.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;

@@ -13,11 +13,22 @@
         </e>
         <e p="Scenes" t="Include">
           <e p="Scripts" t="Include">
-            <e p="EnemySpawnModel.cs" t="Include" />
-            <e p="FindTargetSystemCF.cs" t="Include" />
-            <e p="GameHadnlerCF.cs" t="Include" />
-            <e p="SpawnSystem.cs" t="Include" />
-            <e p="UnitMoveToTargetSystemCF.cs" t="Include" />
+            <e p="Bridge" t="Include">
+              <e p="EnemySpawnModel.cs" t="Include" />
+            </e>
+            <e p="Components" t="Include">
+              <e p="AttackFaze.cs" t="Include" />
+              <e p="HasTarget.cs" t="Include" />
+              <e p="Target.cs" t="Include" />
+              <e p="Team.cs" t="Include" />
+              <e p="Unit.cs" t="Include" />
+            </e>
+            <e p="system" t="Include">
+              <e p="AttackSystem.cs" t="Include" />
+              <e p="FindTargetSystemCF.cs" t="Include" />
+              <e p="SpawnSystem.cs" t="Include" />
+              <e p="UnitMoveToTargetSystemCF.cs" t="Include" />
+            </e>
           </e>
         </e>
       </e>
