@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using UnityEngine;
 
 namespace Scenes.Components
 {
@@ -15,14 +16,20 @@ namespace Scenes.Components
         {
             Entities.WithAll<AttackFaze>().ForEach((Entity targetEntity, ref HasTarget hasTarget) =>
             {
-                Unit unitData = activeEntityManager.GetComponentData<Unit>(targetEntity);
-                Unit enemyData = activeEntityManager.GetComponentData<Unit>(hasTarget.targetEnity);
-                float enemyDataHealth = enemyData.health;
-                float unitDataDamage = unitData.damage;
-                
-                if (enemyDataHealth >= 0)
+                Debug.Log("enemy health left - ");
+                Unit targetEntityData = activeEntityManager.GetComponentData<Unit>(targetEntity);
+                Unit enemyEntityData = activeEntityManager.GetComponentData<Unit>(hasTarget.targetEnity);
+                float unitDataDamage = targetEntityData.damage;
+
+                // enemyEntityData.health -= unitDataDamage;
+
+                if (enemyEntityData.health >= 0)
                 {
-                        
+                    Debug.Log("enemy health left - " + enemyEntityData.health);
+                    PostUpdateCommands.SetComponent(targetEntity,new MovingFaze{isActive = true});
+                    PostUpdateCommands.RemoveComponent(targetEntity, typeof(HasTarget));
+                    PostUpdateCommands.RemoveComponent(targetEntity, typeof(AttackFaze));
+                    PostUpdateCommands.DestroyEntity(hasTarget.targetEnity);
                 }
             });
         }

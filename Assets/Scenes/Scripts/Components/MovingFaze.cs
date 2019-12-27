@@ -2,10 +2,8 @@
 
 namespace Scenes.Components
 {
-    public struct Unit : IComponentData
+    public struct MovingFaze: IComponentData
     {
         public bool isActive;
-        public float health;
-        public int damage;
     }
 }

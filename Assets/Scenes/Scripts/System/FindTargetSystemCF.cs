@@ -13,19 +13,17 @@ namespace Scenes
             Entities.WithNone<HasTarget>().WithAll<Unit>().ForEach((Entity entity, ref Translation unitTransalation) =>
             {
                 Team yourTeam = World.Active.EntityManager.GetComponentData<Team>(entity);
-                
+
                 float3 unitPosition = unitTransalation.Value;
                 Entity closestTargetEntity = Entity.Null;
                 float3 closestTargetPosition = float3.zero;
 
                 Entities.WithAll<Unit>().ForEach((Entity targetEntity, ref Translation targetTranslation) =>
                 {
-                    
                     Team enemyTeam = World.Active.EntityManager.GetComponentData<Team>(targetEntity);
-                    
+
                     if (enemyTeam.team != yourTeam.team)
                     {
-                       
                         if (closestTargetEntity == Entity.Null)
                         {
                             closestTargetEntity = targetEntity;
@@ -44,7 +42,8 @@ namespace Scenes
                 });
                 if (closestTargetEntity != Entity.Null)
                 {
-                    PostUpdateCommands.AddComponent(entity, new HasTarget {targetEnity = closestTargetEntity});
+                    PostUpdateCommands.AddComponent(entity,
+                        new HasTarget {targetEnity = closestTargetEntity});
                 }
             });
         }

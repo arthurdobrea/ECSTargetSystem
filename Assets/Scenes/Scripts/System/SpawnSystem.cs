@@ -30,12 +30,12 @@ public class SpawnSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
-        if(spawner == null) spawner = spawnerQuery.ToComponentArray<EnemySpawnModel>();
-        
+        if (spawner == null) spawner = spawnerQuery.ToComponentArray<EnemySpawnModel>();
+
         unitMaterial = spawner[0].UnitMaterial;
         tragetMaterial = spawner[0].TargetMaterial;
         mesh = spawner[0].mesh;
-        
+
         float deltaTime = Time.deltaTime;
 
         for (int i = 0; i < spawner.Length; i++)
@@ -46,10 +46,10 @@ public class SpawnSystem : ComponentSystem
 
             time[i] += deltaTime;
 
-            Debug.Log("before spawning");
+            // Debug.Log("before spawning");
             if (time[i] >= spawner[i].SpawnTime)
             {
-                Debug.Log("instantiate");
+                // Debug.Log("instantiate");
                 SpawnUnitEntity();
                 SpawnTargetEntity();
                 time[i] = 0f;
@@ -70,11 +70,14 @@ public class SpawnSystem : ComponentSystem
             typeof(RenderMesh),
             typeof(Scale),
             typeof(Unit),
-            typeof(Team)
+            typeof(Team),
+            typeof(MovingFaze)
         );
         SetEntityComponentData(entity, position, unitMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = 1.5f});
         entityManager.SetComponentData(entity, new Team {team = 2});
+        entityManager.SetComponentData(entity, new Unit {health = 100, damage = 10});
+        entityManager.SetComponentData(entity, new MovingFaze {isActive = true});
     }
 
     private void SpawnTargetEntity()
@@ -85,11 +88,14 @@ public class SpawnSystem : ComponentSystem
             typeof(RenderMesh),
             typeof(Scale),
             typeof(Unit),
-            typeof(Team)
+            typeof(Team),
+            typeof(MovingFaze)
         );
         SetEntityComponentData(entity, new float3(5, 5, 0), tragetMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = .5f});
         entityManager.SetComponentData(entity, new Team {team = 1});
+        entityManager.SetComponentData(entity, new Unit {health = 200, damage = 5});
+        entityManager.SetComponentData(entity, new MovingFaze {isActive = true});
     }
 
     private void SetEntityComponentData(Entity entity, float3 spawnPosition, Material material)
