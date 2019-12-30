@@ -8,10 +8,9 @@ public class UnitMoveToTargetSystemCF : ComponentSystem
 {
     protected override void OnUpdate()
     {
-        Entities.ForEach((Entity targetUnitEntity, ref HasTarget hasTarget, ref Translation translation) =>
+        Entities.ForEach((Entity unitEntity, ref HasTarget hasTarget, ref Translation translation) =>
         {
-            MovingFaze targetUnitEntityData = World.Active.EntityManager.GetComponentData<MovingFaze>(targetUnitEntity);
-            if (World.Active.EntityManager.Exists(hasTarget.targetEnity) && targetUnitEntityData.isActive)
+            if (World.Active.EntityManager.Exists(hasTarget.targetEnity))
             {
                 Translation targetTranslation =
                     World.Active.EntityManager.GetComponentData<Translation>(hasTarget.targetEnity);
@@ -22,13 +21,13 @@ public class UnitMoveToTargetSystemCF : ComponentSystem
 
                 if (math.distance(translation.Value, targetTranslation.Value) < .2f)
                 {
-                    PostUpdateCommands.AddComponent(targetUnitEntity, typeof(AttackFaze));
-                    PostUpdateCommands.SetComponent(targetUnitEntity, new MovingFaze{isActive = false} );
+                    PostUpdateCommands.DestroyEntity(hasTarget.targetEnity);
+                    PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
                 }
             }
             else
             {
-                PostUpdateCommands.RemoveComponent(targetUnitEntity, typeof(HasTarget));
+                PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
             }
         });
     }
