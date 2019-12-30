@@ -25,11 +25,7 @@ namespace Scenes.Components
 
                 if (enemyEntityData.health >= 0)
                 {
-                    Debug.Log("enemy health left - " + enemyEntityData.health);
-                    PostUpdateCommands.SetComponent(targetEntity,new MovingFaze{isActive = true});
-                    PostUpdateCommands.RemoveComponent(targetEntity, typeof(HasTarget));
-                    PostUpdateCommands.RemoveComponent(targetEntity, typeof(AttackFaze));
-                    PostUpdateCommands.DestroyEntity(hasTarget.targetEnity);
+                   
                 }
             });
         }
