@@ -70,14 +70,13 @@ public class SpawnSystem : ComponentSystem
             typeof(RenderMesh),
             typeof(Scale),
             typeof(Unit),
-            typeof(Team)
-            //typeof(MovingFaze)
+            typeof(Team),
+            typeof(HealthData)
         );
         SetEntityComponentData(entity, position, unitMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = 1.5f});
         entityManager.SetComponentData(entity, new Team {team = 2});
-        entityManager.SetComponentData(entity, new Unit {health = 100, damage = 10});
-       // entityManager.SetComponentData(entity, new MovingFaze {isActive = true});
+        entityManager.SetComponentData(entity, new HealthData {health = 100});
     }
 
     private void SpawnTargetEntity()
@@ -88,14 +87,13 @@ public class SpawnSystem : ComponentSystem
             typeof(RenderMesh),
             typeof(Scale),
             typeof(Unit),
-            typeof(Team)
-           // typeof(MovingFaze)
+            typeof(Team),
+            typeof(HealthData)
         );
         SetEntityComponentData(entity, new float3(5, 5, 0), tragetMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = .5f});
         entityManager.SetComponentData(entity, new Team {team = 1});
-        entityManager.SetComponentData(entity, new Unit {health = 200, damage = 5});
-        //entityManager.SetComponentData(entity, new MovingFaze {isActive = true});
+        entityManager.SetComponentData(entity, new HealthData {health = 100});
     }
 
     private void SetEntityComponentData(Entity entity, float3 spawnPosition, Material material)

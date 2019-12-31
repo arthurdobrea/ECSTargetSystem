@@ -14,20 +14,24 @@ namespace Scenes.Components
 
         protected override void OnUpdate()
         {
-            Entities.WithAll<AttackFaze>().ForEach((Entity targetEntity, ref HasTarget hasTarget) =>
-            {
-                Debug.Log("enemy health left - ");
-                Unit targetEntityData = activeEntityManager.GetComponentData<Unit>(targetEntity);
-                Unit enemyEntityData = activeEntityManager.GetComponentData<Unit>(hasTarget.targetEnity);
-                float unitDataDamage = targetEntityData.damage;
-
-                // enemyEntityData.health -= unitDataDamage;
-
-                if (enemyEntityData.health >= 0)
+            Entities.WithAll<EnemyAttackData>().ForEach((Entity targetEntity, ref EnemyAttackData attackData) =>
                 {
-                   
-                }
-            });
+                    attackData.timer += Time.deltaTime;
+
+                    Entity attacker = attackData.source;
+                    Entity target = attackData.target;
+
+                    HealthData componentData = activeEntityManager.GetComponentData<HealthData>(target);
+
+                    if (attackData.timer >= attackData.frequency)
+                    {
+                        attackData.timer = 0f;
+
+                        float newHp = componentData.health - attackData.damage;
+                        
+                        activeEntityManager.SetComponentData(target, new HealthData{health = newHp});
+                    }
+                });
         }
     }
 }

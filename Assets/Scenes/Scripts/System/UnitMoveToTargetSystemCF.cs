@@ -21,8 +21,14 @@ public class UnitMoveToTargetSystemCF : ComponentSystem
 
                 if (math.distance(translation.Value, targetTranslation.Value) < .2f)
                 {
-                    PostUpdateCommands.DestroyEntity(hasTarget.targetEnity);
-                    PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
+                    PostUpdateCommands.AddComponent(unitEntity, new EnemyAttackData
+                     {
+                         timer = 0f,
+                         frequency = 1,
+                         damage = 10,
+                         source = unitEntity,
+                         target = hasTarget.targetEnity
+                     });
                 }
             }
             else
