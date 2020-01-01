@@ -51,8 +51,12 @@ public class SpawnSystem : ComponentSystem
             if (time[i] >= spawner[i].SpawnTime)
             {
                 // Debug.Log("instantiate");
-                SpawnUnitEntity();
-                SpawnTargetEntity();
+                for (int j = 0; j < 23; j++)
+                {
+                    SpawnUnitEntity();
+                    SpawnTargetEntity();
+
+                }
                 time[i] = 0f;
             }
         }
@@ -60,10 +64,8 @@ public class SpawnSystem : ComponentSystem
 
     private void SpawnUnitEntity()
     {
-        //For testing purpose
-        SpawnUnitEntity(new float3(Random.Range(-5,5), Random.Range(-5,5), 0));
-        
-        // SpawnUnitEntity(new float3(0, 0, 0));
+
+        SpawnUnitEntity(new float3(0, 0, 0));
     }
 
     private void SpawnUnitEntity(float3 position)
@@ -94,10 +96,8 @@ public class SpawnSystem : ComponentSystem
             typeof(Team),
             typeof(HealthData)
         );
-        //For Testing purpose
-        SetEntityComponentData(entity, new float3(Random.Range(-5,5), Random.Range(-5,5), 0), tragetMaterial);
 
-        // SetEntityComponentData(entity, new float3(5, 5, 0), tragetMaterial);
+        SetEntityComponentData(entity, new float3(5, 5, 0), tragetMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = .5f});
         entityManager.SetComponentData(entity, new Team {team = 1});
         entityManager.SetComponentData(entity, new HealthData {health = 100});
