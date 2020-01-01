@@ -14,22 +14,35 @@ namespace Scenes.Components
 
         protected override void OnUpdate()
         {
-            Entities.WithAll<EnemyAttackData>().ForEach((Entity targetEntity, ref EnemyAttackData attackData) =>
+            Entities.WithAll<EnemyAttackData>().ForEach((Entity targetEntity,ref EnemyAttackData attackData) =>
                 {
-                    attackData.timer += Time.deltaTime;
-
-                    Entity attacker = attackData.source;
-                    Entity target = attackData.target;
-
-                    HealthData componentData = activeEntityManager.GetComponentData<HealthData>(target);
-
-                    if (attackData.timer >= attackData.frequency)
+                    if (activeEntityManager.Exists(attackData.target))
                     {
-                        attackData.timer = 0f;
+                        attackData.timer += Time.deltaTime;
 
-                        float newHp = componentData.health - attackData.damage;
-                        
-                        activeEntityManager.SetComponentData(target, new HealthData{health = newHp});
+                        Entity attacker = attackData.source;
+                        Entity target = attackData.target;
+
+                        HealthData componentData = activeEntityManager.GetComponentData<HealthData>(target);
+
+                   
+                        if (attackData.timer >= attackData.frequency)
+                        {
+                            Debug.Log("Here in attack system");
+                            attackData.timer = 0f;
+
+                            float newHp = componentData.health - attackData.damage;
+
+                            if (newHp <= 0)
+                            {
+                                activeEntityManager.DestroyEntity(target);
+                            }
+                            else
+                            {
+                                activeEntityManager.SetComponentData(target, new HealthData{health = newHp});
+                            }
+
+                        }
                     }
                 });
         }
