@@ -4,6 +4,5 @@ namespace Scenes.Components
 {
     public struct Unit : IComponentData
     {
-        
     }
 }

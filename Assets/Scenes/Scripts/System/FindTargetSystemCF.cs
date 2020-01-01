@@ -2,7 +2,6 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Scenes
 {
@@ -44,6 +43,11 @@ namespace Scenes
                 {
                     PostUpdateCommands.AddComponent(entity,
                         new HasTarget {targetEnity = closestTargetEntity});
+                }
+
+                if (!World.Active.EntityManager.Exists(closestTargetEntity))
+                {
+                    PostUpdateCommands.RemoveComponent(entity, typeof(HasTarget));
                 }
             });
         }

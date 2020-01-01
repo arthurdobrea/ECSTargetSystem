@@ -6,46 +6,42 @@ using UnityEngine;
 
 public class UnitMoveToTargetSystemCF : ComponentSystem
 {
-    private Entity enemyAttackEntity;
     private EntityManager entityManager = World.Active.EntityManager;
-    private EntityArchetype enemyAttackArchetype;
 
     protected override void OnCreate()
     {
-        enemyAttackArchetype = entityManager.CreateArchetype(typeof(EnemyAttackData));
     }
 
     protected override void OnUpdate()
     {
-        Entities.ForEach((Entity unitEntity, ref HasTarget hasTarget, ref Translation translation) =>
-        {
-            if (entityManager.Exists(hasTarget.targetEnity))
+        Entities.WithNone<EnemyAttackData>().WithAll<HasTarget>().ForEach(
+            (Entity unitEntity, ref HasTarget hasTarget, ref Translation translation) =>
             {
-                Translation targetTranslation =
-                    entityManager.GetComponentData<Translation>(hasTarget.targetEnity);
-
-                float3 targetDir = math.normalize(targetTranslation.Value - translation.Value);
-                float moveSpeed = 5f;
-
-                translation.Value += targetDir * moveSpeed * Time.deltaTime;
-
-                if (math.distance(translation.Value, targetTranslation.Value) < .2f)
+                if (entityManager.Exists(hasTarget.targetEnity))
                 {
-                    enemyAttackEntity = entityManager.CreateEntity(enemyAttackArchetype);
-                    entityManager.SetComponentData(enemyAttackEntity, new EnemyAttackData
+                    Translation targetTranslation = entityManager.GetComponentData<Translation>(hasTarget.targetEnity);
+
+                    float3 targetDir = math.normalize(targetTranslation.Value - translation.Value);
+                    float moveSpeed = 5f;
+
+                    translation.Value += targetDir * moveSpeed * Time.deltaTime;
+
+                    if (math.distance(translation.Value, targetTranslation.Value) < .2f)
                     {
-                        timer = 0f,
-                        frequency = 1f,
-                        damage = 10,
-                        source = unitEntity,
-                        target = hasTarget.targetEnity
-                    });
+                        entityManager.AddComponentData(unitEntity, new EnemyAttackData
+                        {
+                            timer = 0f,
+                            frequency = 0.1f,
+                            damage = 10,
+                            source = unitEntity,
+                            target = hasTarget.targetEnity
+                        });
+                    }
                 }
-            }
-            else
-            {
-                PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
-            }
-        });
+                else
+                {
+                    PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
+                }
+            });
     }
 }

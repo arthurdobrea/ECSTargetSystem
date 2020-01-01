@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SpawnSystem : ComponentSystem
 {
@@ -59,7 +60,10 @@ public class SpawnSystem : ComponentSystem
 
     private void SpawnUnitEntity()
     {
-        SpawnUnitEntity(new float3(0, 0, 0));
+        //For testing purpose
+        SpawnUnitEntity(new float3(Random.Range(-5,5), Random.Range(-5,5), 0));
+        
+        // SpawnUnitEntity(new float3(0, 0, 0));
     }
 
     private void SpawnUnitEntity(float3 position)
@@ -90,11 +94,15 @@ public class SpawnSystem : ComponentSystem
             typeof(Team),
             typeof(HealthData)
         );
-        SetEntityComponentData(entity, new float3(5, 5, 0), tragetMaterial);
+        //For Testing purpose
+        SetEntityComponentData(entity, new float3(Random.Range(-5,5), Random.Range(-5,5), 0), tragetMaterial);
+
+        // SetEntityComponentData(entity, new float3(5, 5, 0), tragetMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = .5f});
         entityManager.SetComponentData(entity, new Team {team = 1});
         entityManager.SetComponentData(entity, new HealthData {health = 100});
     }
+    
 
     private void SetEntityComponentData(Entity entity, float3 spawnPosition, Material material)
     {

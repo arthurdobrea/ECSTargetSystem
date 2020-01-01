@@ -14,37 +14,39 @@ namespace Scenes.Components
 
         protected override void OnUpdate()
         {
-            Entities.WithAll<EnemyAttackData>().ForEach((Entity targetEntity,ref EnemyAttackData attackData) =>
+            Entities.WithAll<EnemyAttackData>().ForEach((Entity targetEntity, ref EnemyAttackData attackData) =>
+            {
+                if (activeEntityManager.Exists(attackData.target))
                 {
-                    if (activeEntityManager.Exists(attackData.target))
+                    attackData.timer += Time.deltaTime;
+
+                    Entity source = attackData.source;
+                    Entity target = attackData.target;
+
+                    HealthData componentData = activeEntityManager.GetComponentData<HealthData>(target);
+
+                    if (attackData.timer >= attackData.frequency)
                     {
-                        attackData.timer += Time.deltaTime;
+                        attackData.timer = 0f;
 
-                        Entity attacker = attackData.source;
-                        Entity target = attackData.target;
+                        float newHp = componentData.health - attackData.damage;
 
-                        HealthData componentData = activeEntityManager.GetComponentData<HealthData>(target);
-
-                   
-                        if (attackData.timer >= attackData.frequency)
+                        if (newHp <= 0)
                         {
-                            Debug.Log("Here in attack system");
-                            attackData.timer = 0f;
-
-                            float newHp = componentData.health - attackData.damage;
-
-                            if (newHp <= 0)
-                            {
-                                activeEntityManager.DestroyEntity(target);
-                            }
-                            else
-                            {
-                                activeEntityManager.SetComponentData(target, new HealthData{health = newHp});
-                            }
-
+                            activeEntityManager.RemoveComponent(source, typeof(EnemyAttackData));
+                            activeEntityManager.DestroyEntity(target);
+                        }
+                        else
+                        {
+                            activeEntityManager.SetComponentData(target, new HealthData {health = newHp});
                         }
                     }
-                });
+                }
+                else
+                {
+                    activeEntityManager.RemoveComponent(attackData.source, typeof(EnemyAttackData));
+                }
+            });
         }
     }
 }
