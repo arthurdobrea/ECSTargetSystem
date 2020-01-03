@@ -22,7 +22,7 @@ public class UnitMoveToTargetSystemCF : ComponentSystem
                     Translation targetTranslation = entityManager.GetComponentData<Translation>(hasTarget.targetEnity);
 
                     float3 targetDir = math.normalize(targetTranslation.Value - translation.Value);
-                    float moveSpeed = 5f;
+                    float moveSpeed = 7f;
 
                     translation.Value += targetDir * moveSpeed * Time.deltaTime;
 
