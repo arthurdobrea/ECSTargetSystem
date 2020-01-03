@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\User\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\User\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_ECSTargetSystem.1063643586.00" t="ExcludeRecursive" />
-    <e p="D:\Games\Practice\ECSTargetSystem" t="IncludeRecursive">
+    <e p="C:\Users\KamiSama\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\KamiSama\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_ECSTargetSystem.1009977193.00" t="ExcludeRecursive" />
+    <e p="D:\GameDev\ECSTargetSystem" t="IncludeRecursive">
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="Scenes" t="Include">
@@ -12,10 +12,9 @@
               <e p="EnemySpawnModel.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
-              <e p="AttackFaze.cs" t="Include" />
+              <e p="EnemyAttackData.cs" t="Include" />
               <e p="HasTarget.cs" t="Include" />
-              <e p="MovingFaze.cs" t="Include" />
-              <e p="Target.cs" t="Include" />
+              <e p="HealthData.cs" t="Include" />
               <e p="Team.cs" t="Include" />
               <e p="Unit.cs" t="Include" />
             </e>

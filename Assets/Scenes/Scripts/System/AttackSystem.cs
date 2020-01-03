@@ -14,18 +14,37 @@ namespace Scenes.Components
 
         protected override void OnUpdate()
         {
-            Entities.WithAll<AttackFaze>().ForEach((Entity targetEntity, ref HasTarget hasTarget) =>
+            Entities.WithAll<EnemyAttackData>().ForEach((Entity targetEntity, ref EnemyAttackData attackData) =>
             {
-                Debug.Log("enemy health left - ");
-                Unit targetEntityData = activeEntityManager.GetComponentData<Unit>(targetEntity);
-                Unit enemyEntityData = activeEntityManager.GetComponentData<Unit>(hasTarget.targetEnity);
-                float unitDataDamage = targetEntityData.damage;
-
-                // enemyEntityData.health -= unitDataDamage;
-
-                if (enemyEntityData.health >= 0)
+                if (activeEntityManager.Exists(attackData.target))
                 {
-                   
+                    attackData.timer += Time.deltaTime;
+
+                    Entity source = attackData.source;
+                    Entity target = attackData.target;
+
+                    HealthData componentData = activeEntityManager.GetComponentData<HealthData>(target);
+
+                    if (attackData.timer >= attackData.frequency)
+                    {
+                        attackData.timer = 0f;
+
+                        float newHp = componentData.health - attackData.damage;
+
+                        if (newHp <= 0)
+                        {
+                            activeEntityManager.RemoveComponent(source, typeof(EnemyAttackData));
+                            activeEntityManager.DestroyEntity(target);
+                        }
+                        else
+                        {
+                            activeEntityManager.SetComponentData(target, new HealthData {health = newHp});
+                        }
+                    }
+                }
+                else
+                {
+                    activeEntityManager.RemoveComponent(attackData.source, typeof(EnemyAttackData));
                 }
             });
         }
