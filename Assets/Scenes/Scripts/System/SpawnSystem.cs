@@ -49,11 +49,10 @@ public class SpawnSystem : ComponentSystem
 
             if (time[i] >= spawner[i].SpawnTime)
             {
-                for (int j = 0; j < 200; j++)
+                for (int j = 0; j < 3; j++)
                 {
                     SpawnUnitEntity();
                     SpawnTargetEntity();
-
                 }
                 time[i] = 0f;
             }
