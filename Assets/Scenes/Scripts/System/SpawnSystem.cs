@@ -73,12 +73,11 @@ public class SpawnSystem : ComponentSystem
             typeof(RenderMesh),
             typeof(Scale),
             typeof(Unit),
-            typeof(Team),
+            typeof(Team1),
             typeof(HealthData)
         );
         SetEntityComponentData(entity, position, unitMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = 1.5f});
-        entityManager.SetComponentData(entity, new Team {team = 2});
         entityManager.SetComponentData(entity, new HealthData {health = 100});
     }
 
@@ -90,13 +89,12 @@ public class SpawnSystem : ComponentSystem
             typeof(RenderMesh),
             typeof(Scale),
             typeof(Unit),
-            typeof(Team),
+            typeof(Team2),
             typeof(HealthData)
         );
 
         SetEntityComponentData(entity, new float3(Random.Range(-25,20), 2, Random.Range(-25,20)), tragetMaterial);
         entityManager.SetComponentData(entity, new Scale {Value = 1.5f});
-        entityManager.SetComponentData(entity, new Team {team = 1});
         entityManager.SetComponentData(entity, new HealthData {health = 100});
     }
     

@@ -2,8 +2,8 @@
 
 namespace Scenes.Components
 {
-    public struct Team : IComponentData
+    public struct Team1 : IComponentData
     {
-        public int team;
+       
     }
 }

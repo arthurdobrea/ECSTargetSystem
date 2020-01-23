@@ -7,56 +7,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace Scenes
-{
-    // public class FindTargetSystemCF : ComponentSystem
-    // {
-    //     protected override void OnUpdate()
-    //     {
-    //         Entities.WithNone<HasTarget>().WithAll<Unit>().ForEach((Entity entity, ref Translation unitTransalation) =>
-    //         {
-    //             Team yourTeam = World.Active.EntityManager.GetComponentData<Team>(entity);
-    //
-    //             float3 unitPosition = unitTransalation.Value;
-    //             Entity closestTargetEntity = Entity.Null;
-    //             float3 closestTargetPosition = float3.zero;
-    //
-    //             Entities.WithAll<Unit>().ForEach((Entity targetEntity, ref Translation targetTranslation) =>
-    //             {
-    //                 Team enemyTeam = World.Active.EntityManager.GetComponentData<Team>(targetEntity);
-    //
-    //                 if (enemyTeam.team != yourTeam.team)
-    //                 {
-    //                     if (closestTargetEntity == Entity.Null)
-    //                     {
-    //                         closestTargetEntity = targetEntity;
-    //                         closestTargetPosition = targetTranslation.Value;
-    //                     }
-    //                     else
-    //                     {
-    //                         if (math.distance(unitPosition, targetTranslation.Value) <
-    //                             math.distance(unitPosition, closestTargetPosition))
-    //                         {
-    //                             closestTargetEntity = targetEntity;
-    //                             closestTargetPosition = targetTranslation.Value;
-    //                         }
-    //                     }
-    //                 }
-    //             });
-    //             if (closestTargetEntity != Entity.Null)
-    //             {
-    //                 PostUpdateCommands.AddComponent(entity,
-    //                     new HasTarget {targetEnity = closestTargetEntity});
-    //             }
-    //
-    //             if (!World.Active.EntityManager.Exists(closestTargetEntity))
-    //             {
-    //                 PostUpdateCommands.RemoveComponent(entity, typeof(HasTarget));
-    //             }
-    //         });
-    //     }
-    // }
-}
 
 public class FindTargetJobSystem : JobComponentSystem
 {
@@ -66,18 +16,16 @@ public class FindTargetJobSystem : JobComponentSystem
         public float3 position;
     }
 
-    [RequireComponentTag(typeof(Unit))]
-    [ExcludeComponent(typeof(HasTarget))]
+    [RequireComponentTag(typeof(Team1))]
     [BurstCompile]
-    public struct FindTargetJob : IJobForEachWithEntity<Translation>
+    [ExcludeComponent(typeof(HasTarget))]
+    public struct Team1FindTargetJob : IJobForEachWithEntity<Translation>
     {
-        
         [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<EntityWithPosition> targetArray;
-        public EntityCommandBuffer.Concurrent entityCommandBuffer;
-        public void Execute(Entity entity, int index, [ReadOnly]ref Translation entityTranslation)
-        {
-            Team yourTeam = World.Active.EntityManager.GetComponentData<Team>(entity);
+        public NativeArray<Entity> closestTargetNativeArray;
 
+        public void Execute(Entity entity, int index, [ReadOnly] ref Translation entityTranslation)
+        {
             float3 unitPosition = entityTranslation.Value;
             Entity closestTargetEntity = Entity.Null;
             float3 closestTargetPosition = float3.zero;
@@ -85,35 +33,82 @@ public class FindTargetJobSystem : JobComponentSystem
             for (int i = 0; i < targetArray.Length; i++)
             {
                 EntityWithPosition targetEntityWithPosition = targetArray[i];
-                Team enemyTeam = World.Active.EntityManager.GetComponentData<Team>(targetEntityWithPosition.entity);
 
-                if (enemyTeam.team != yourTeam.team)
+                if (closestTargetEntity == Entity.Null)
                 {
-                    if (closestTargetEntity == Entity.Null)
+                    closestTargetEntity = targetEntityWithPosition.entity;
+                    closestTargetPosition = targetEntityWithPosition.position;
+                }
+                else
+                {
+                    if (math.distance(unitPosition, targetEntityWithPosition.position) <
+                        math.distance(unitPosition, closestTargetPosition))
                     {
                         closestTargetEntity = targetEntityWithPosition.entity;
                         closestTargetPosition = targetEntityWithPosition.position;
                     }
-                    else
-                    {
-                        if (math.distance(unitPosition, targetEntityWithPosition.position) <
-                            math.distance(unitPosition, closestTargetPosition))
-                        {
-                            closestTargetEntity = targetEntityWithPosition.entity;
-                            closestTargetPosition =targetEntityWithPosition.position;
-                        }
-                    }
                 }
             }
+
             if (closestTargetEntity != Entity.Null)
             {
-                //entityCommandBuffer.AddComponent(index,entity, new HasTarget {targetEnity = closestTargetEntity});
+                //entityCommandBuffer.AddComponent(index, entity, new HasTarget {targetEnity = closestTargetEntity});
             }
 
             if (!World.Active.EntityManager.Exists(closestTargetEntity))
             {
-                entityCommandBuffer.RemoveComponent(index,entity, typeof(HasTarget));
+                //entityCommandBuffer.RemoveComponent(index, entity, typeof(HasTarget));
             }
+            
+            closestTargetNativeArray[index] = closestTargetEntity;
+        }
+       
+    }
+    
+
+    [RequireComponentTag(typeof(Team2))]
+    [ExcludeComponent(typeof(HasTarget))]
+    public struct Team2FindTargetJob : IJobForEachWithEntity<Translation>
+    {
+        [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<EntityWithPosition> targetArray;
+        public NativeArray<Entity> closestTargetNativeArray;
+
+        public void Execute(Entity entity, int index, [ReadOnly] ref Translation entityTranslation)
+        {
+            float3 unitPosition = entityTranslation.Value;
+            Entity closestTargetEntity = Entity.Null;
+            float3 closestTargetPosition = float3.zero;
+
+            for (int i = 0; i < targetArray.Length; i++)
+            {
+                EntityWithPosition targetEntityWithPosition = targetArray[i];
+
+                if (closestTargetEntity == Entity.Null)
+                {
+                    closestTargetEntity = targetEntityWithPosition.entity;
+                    closestTargetPosition = targetEntityWithPosition.position;
+                }
+                else
+                {
+                    if (math.distance(unitPosition, targetEntityWithPosition.position) <
+                        math.distance(unitPosition, closestTargetPosition))
+                    {
+                        closestTargetEntity = targetEntityWithPosition.entity;
+                        closestTargetPosition = targetEntityWithPosition.position;
+                    }
+                }
+            }
+
+            if (closestTargetEntity != Entity.Null)
+            {
+               // entityCommandBuffer.AddComponent(index, entity, new HasTarget {targetEnity = closestTargetEntity});
+            }
+
+            if (!World.Active.EntityManager.Exists(closestTargetEntity))
+            {
+                //entityCommandBuffer.RemoveComponent(index, entity, typeof(HasTarget));
+            }
+            closestTargetNativeArray[index] = closestTargetEntity;
         }
     }
 
@@ -125,33 +120,89 @@ public class FindTargetJobSystem : JobComponentSystem
         base.OnCreate();
     }
 
+    private struct AddCopmonentJob :IJobForEachWithEntity<Translation>
+    {
+        [DeallocateOnJobCompletion] [ReadOnly]  public NativeArray<Entity> closestNativeArray;
+        public EntityCommandBuffer.Concurrent entityCommandBuffer;
+        public void Execute(Entity entity, int index, ref Translation c0)
+        {
+            if (closestNativeArray[index] != Entity.Null)
+            {
+                entityCommandBuffer.AddComponent(index,entity,new HasTarget {targetEnity = closestNativeArray[index]});
+            }
+        }
+    }
+
     protected override JobHandle OnUpdate(JobHandle inputDeps)
     {
-        EntityQuery entityQueries = GetEntityQuery(typeof(Unit), ComponentType.ReadOnly<Translation>());
-        
-        NativeArray<Entity> targetEntityArray = entityQueries.ToEntityArray(Allocator.TempJob);
-        NativeArray<Translation> targetTranslationArray = entityQueries.ToComponentDataArray<Translation>(Allocator.TempJob);
-        
-        NativeArray<EntityWithPosition> targetArray = new NativeArray<EntityWithPosition>(targetEntityArray.Length ,Allocator.TempJob);
+        EntityQuery team1entityQueries = GetEntityQuery(typeof(Team1), ComponentType.ReadOnly<Translation>());
+        NativeArray<Entity> team1targetEntityArray = team1entityQueries.ToEntityArray(Allocator.TempJob);
+        NativeArray<Translation> team1targetTranslationArray = team1entityQueries.ToComponentDataArray<Translation>(Allocator.TempJob);
+        NativeArray<EntityWithPosition> team1targetArray = new NativeArray<EntityWithPosition>(team1targetEntityArray.Length, Allocator.TempJob);
 
-        for (int i = 0; i < targetEntityArray.Length; ++i)
+        EntityQuery team2entityQueries = GetEntityQuery(typeof(Team2), ComponentType.ReadOnly<Translation>());
+        NativeArray<Entity> team2targetEntityArray = team2entityQueries.ToEntityArray(Allocator.TempJob);
+        NativeArray<Translation> team2targetTranslationArray = team2entityQueries.ToComponentDataArray<Translation>(Allocator.TempJob);
+        NativeArray<EntityWithPosition> team2targetArray = new NativeArray<EntityWithPosition>(team2targetEntityArray.Length, Allocator.TempJob);
+
+        for (int i = 0; i < team1targetEntityArray.Length; ++i)
         {
-            targetArray[i] = new EntityWithPosition
+            team1targetArray[i] = new EntityWithPosition
             {
-                entity = targetEntityArray[i],
-                position = targetTranslationArray[i].Value
+                entity = team1targetEntityArray[i],
+                position = team1targetTranslationArray[i].Value
             };
         }
 
-        targetEntityArray.Dispose();
-        targetTranslationArray.Dispose();
-
-        FindTargetJob targetJob = new FindTargetJob
+        for (int i = 0; i < team2targetEntityArray.Length; ++i)
         {
-            targetArray = targetArray,
-            entityCommandBuffer = entityCommandBufferSystem.CreateCommandBuffer().ToConcurrent(), 
+            team2targetArray[i] = new EntityWithPosition
+            {
+                entity = team2targetEntityArray[i],
+                position = team2targetTranslationArray[i].Value
+            };
+        }
+
+        team1targetEntityArray.Dispose();
+        team1targetTranslationArray.Dispose();
+
+        team2targetEntityArray.Dispose();
+        team2targetTranslationArray.Dispose();
+
+        EntityQuery team1query = GetEntityQuery(typeof(Team1), ComponentType.Exclude<HasTarget>());
+        NativeArray<Entity> closestTeam1EntityArray = new NativeArray<Entity>(team1query.CalculateEntityCount(),Allocator.TempJob);
+        Team1FindTargetJob target1Job = new Team1FindTargetJob
+        {
+            targetArray = team1targetArray,
+            closestTargetNativeArray = closestTeam1EntityArray
         };
-        JobHandle jobHandle = targetJob.Schedule(this, inputDeps);
+
+        AddCopmonentJob addCopmonentJobTeam1 = new AddCopmonentJob
+        {
+            closestNativeArray = closestTeam1EntityArray,
+            entityCommandBuffer = entityCommandBufferSystem.CreateCommandBuffer().ToConcurrent()
+        };
+
+        EntityQuery team2query = GetEntityQuery(typeof(Team2), ComponentType.Exclude<HasTarget>());
+        NativeArray<Entity> closestTeam2EntityArray = new NativeArray<Entity>(team2query.CalculateEntityCount(),Allocator.TempJob);
+        Team2FindTargetJob target2Job = new Team2FindTargetJob
+        {
+            targetArray = team2targetArray,
+            closestTargetNativeArray = closestTeam2EntityArray
+        };
+        
+        AddCopmonentJob addCopmonentJobTeam2 = new AddCopmonentJob
+        {
+            closestNativeArray = closestTeam2EntityArray,
+            entityCommandBuffer = entityCommandBufferSystem.CreateCommandBuffer().ToConcurrent()
+        };
+        
+        JobHandle jobHandle = target1Job.Schedule(this, inputDeps);
+        jobHandle = addCopmonentJobTeam1.Schedule(this, jobHandle);
+        
+        // jobHandle = target2Job.Schedule(this, jobHandle);
+        // jobHandle = addCopmonentJobTeam2.Schedule(this, jobHandle);
+        
         entityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
 
         return jobHandle;

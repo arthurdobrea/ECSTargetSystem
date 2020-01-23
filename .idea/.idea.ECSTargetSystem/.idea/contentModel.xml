@@ -15,7 +15,8 @@
               <e p="EnemyAttackData.cs" t="Include" />
               <e p="HasTarget.cs" t="Include" />
               <e p="HealthData.cs" t="Include" />
-              <e p="Team.cs" t="Include" />
+              <e p="Team1.cs" t="Include" />
+              <e p="Team2.cs" t="Include" />
               <e p="Unit.cs" t="Include" />
             </e>
             <e p="system" t="Include">
